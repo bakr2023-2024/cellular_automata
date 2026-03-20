@@ -31,7 +31,7 @@ void renderBoard()
 }
 int main(void)
 {
-    const char *algs = "Game of Life;Brian's Brain;Seeds;Day and Night;Diamoeba";
+    const char *algs = "Game of Life;Brian's Brain;Seeds;Day and Night;Diamoeba;Life without Death;";
     InitWindow(screenWidth, screenHeight, "Cellular Automata");
     int editMapWidth = mapWidth;
     int editMapHeight = mapHeight;
