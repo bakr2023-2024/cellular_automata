@@ -1,4 +1,24 @@
 #include "automata.hpp"
+Cell CellularAutomata::life(int x, int y)
+{
+    int live = 0;
+    for (int dy = -1; dy <= 1; dy++)
+    {
+        for (int dx = -1; dx <= 1; dx++)
+        {
+            if (dx == 0 && dy == 0)
+                continue;
+            int nx = (x + dx + w) % w;
+            int ny = (y + dy + h) % h;
+            if (board[ny][nx] == ALIVE)
+                live++;
+        }
+    }
+    if (board[y][x] == ALIVE)
+        return (live == 2 || live == 3) ? ALIVE : DEAD;
+    else
+        return (live == 3) ? ALIVE : DEAD;
+}
 void CellularAutomata::simulate()
 {
     if (stop)
