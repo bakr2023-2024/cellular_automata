@@ -25,13 +25,13 @@ void renderBoard()
             if (board[i][j] == DEAD)
                 continue;
             Color color = board[i][j] == ALIVE ? liveColor : dyingColor;
-            DrawRectangle(offset.x + j * cellWidth * zoom, offset.y + i * cellHeight * zoom, cellWidth * zoom, cellHeight * zoom, color);
+            DrawRectangle(offset.x + j * cellWidth * zoom + 1, offset.y + i * cellHeight * zoom + 1, cellWidth * zoom - 1, cellHeight * zoom - 1, color);
         }
     }
 }
 int main(void)
 {
-    const char *algs = "Game of Life";
+    const char *algs = "Game of Life;Brian's Brain";
     InitWindow(screenWidth, screenHeight, "Cellular Automata");
     int editMapWidth = mapWidth;
     int editMapHeight = mapHeight;
