@@ -4,6 +4,7 @@
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 #include "automata.hpp"
+#define MAX_CHARS 21
 float screenWidth = 1280, screenHeight = 720;
 Rectangle canvas = {0, 0, screenWidth * 0.8f, screenHeight};
 float controlsWidth = screenWidth - canvas.width, controlsHeight = 20;
@@ -16,6 +17,7 @@ float zoom = 1.0f;
 Vector2 offset = {0, 0};
 Board board = {};
 Color liveColor = WHITE, dyingColor = GRAY, deadColor = BLACK;
+
 void renderBoard()
 {
     for (int i = 0; i < mapHeight; i++)
@@ -31,14 +33,13 @@ void renderBoard()
 }
 int main(void)
 {
-    const char *algs = "Game of Life;Brian's Brain;Seeds;Day and Night;Diamoeba;Life without Death;High Life";
     InitWindow(screenWidth, screenHeight, "Cellular Automata");
+    char ruleInput[MAX_CHARS + 1] = "\0";
     int editMapWidth = mapWidth;
     int editMapHeight = mapHeight;
     bool editMapWidthMode = false;
     bool editMapHeightMode = false;
-    int algChoice = 0;
-    bool editAlgChoiceMode = false;
+    bool editInputMode = false;
     float buttonWidth = controlsWidth / 2;
     float buttonXOffset = (controlsWidth - buttonWidth) / 2;
     float pickerSize = controlsWidth / 2;
@@ -46,7 +47,6 @@ int main(void)
     SetTraceLogLevel(LOG_NONE);
     int yGap = 10;
     CellularAutomata automata{board};
-    automata.setRule((Automata)algChoice);
     while (!WindowShouldClose())
     {
         bool boardReady = !board.empty();
@@ -125,18 +125,20 @@ int main(void)
         y += controlsHeight;
         if (!boardReady)
             GuiDisable();
-        if (editAlgChoiceMode)
-            GuiLock();
-        if (GuiButton({canvas.width + buttonXOffset, y + controlsHeight, buttonWidth, controlsHeight}, "Start"))
-            automata.stop = false;
+        GuiLabel({canvas.width + controlsOffset, y, controlsWidth, controlsHeight}, "Rule string");
         y += controlsHeight;
-        if (GuiButton({canvas.width + buttonXOffset, y + controlsHeight, buttonWidth, controlsHeight}, "Stop"))
+        if (GuiTextBox({canvas.width + controlsOffset, y, controlsWidth - controlsOffset, controlsHeight}, ruleInput, MAX_CHARS, editInputMode))
+            editInputMode = !editInputMode;
+        y += controlsHeight;
+        if (GuiButton({canvas.width + buttonXOffset, y, buttonWidth, controlsHeight}, "Start"))
+        {
+            if (automata.setRule(ruleInput))
+                automata.stop = false;
+        }
+        y += controlsHeight;
+        if (GuiButton({canvas.width + buttonXOffset, y, buttonWidth, controlsHeight}, "Stop"))
             automata.stop = true;
         y += controlsHeight;
-        if (editAlgChoiceMode)
-            GuiUnlock();
-        if (GuiDropdownBox({canvas.width + controlsOffset, y - 2 * controlsHeight, controlsWidth - controlsOffset, controlsHeight}, algs, &algChoice, editAlgChoiceMode))
-            editAlgChoiceMode = !editAlgChoiceMode;
         if (!boardReady)
             GuiEnable();
         if (!automata.stop)

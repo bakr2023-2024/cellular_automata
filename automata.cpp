@@ -1,4 +1,42 @@
 #include "automata.hpp"
+#include <iostream>
+bool CellularAutomata::setRule(char *rule)
+{
+    born = {};
+    survive = {};
+    dying = {};
+    std::string str = rule;
+    if (str.empty())
+        return false;
+    int delimIdx = str.find('/');
+    std::string bornStr = str.substr(1, delimIdx - 1);
+    std::string surviveStr = str.substr(delimIdx + 2);
+    for (char c : bornStr)
+        born.insert(c - '0');
+    for (char c : surviveStr)
+        survive.insert(c - '0');
+    return true;
+};
+Cell CellularAutomata::evolve(int x, int y)
+{
+    int live = 0;
+    for (int dy = -1; dy <= 1; dy++)
+    {
+        for (int dx = -1; dx <= 1; dx++)
+        {
+            if (dx == 0 && dy == 0)
+                continue;
+            int nx = (x + dx + w) % w;
+            int ny = (y + dy + h) % h;
+            if (board[ny][nx] == ALIVE)
+                live++;
+        }
+    }
+    int val = board[y][x];
+    bool isBorn = val == DEAD && born.count(live);
+    bool isSurvive = val == ALIVE && survive.count(live);
+    return isBorn || isSurvive ? ALIVE : DEAD;
+};
 void CellularAutomata::simulate()
 {
     if (stop)
@@ -7,146 +45,8 @@ void CellularAutomata::simulate()
     {
         for (int j = 0; j < w; j++)
         {
-            next[i][j] = apply(j, i);
+            next[i][j] = evolve(j, i);
         }
     }
     std::swap(board, next);
 };
-Cell CellularAutomata::life(int x, int y)
-{
-    int live = 0;
-    for (int dy = -1; dy <= 1; dy++)
-    {
-        for (int dx = -1; dx <= 1; dx++)
-        {
-            if (dx == 0 && dy == 0)
-                continue;
-            int nx = (x + dx + w) % w;
-            int ny = (y + dy + h) % h;
-            if (board[ny][nx] == ALIVE)
-                live++;
-        }
-    }
-    int val = board[y][x];
-    bool livesOn = val == ALIVE && (live == 2 || live == 3);
-    bool reproduction = val == DEAD && live == 3;
-    return livesOn || reproduction ? ALIVE : DEAD;
-}
-Cell CellularAutomata::brian(int x, int y)
-{
-    int live = 0;
-    for (int dy = -1; dy <= 1; dy++)
-    {
-        for (int dx = -1; dx <= 1; dx++)
-        {
-            if (dx == 0 && dy == 0)
-                continue;
-            int nx = (x + dx + w) % w;
-            int ny = (y + dy + h) % h;
-            if (board[ny][nx] == ALIVE)
-                live++;
-        }
-    }
-    int val = board[y][x];
-    if (val == DEAD && live == 2)
-        return ALIVE;
-    else if (val == ALIVE)
-        return DYING;
-    else
-        return DEAD;
-}
-Cell CellularAutomata::seeds(int x, int y)
-{
-    int live = 0;
-    for (int dy = -1; dy <= 1; dy++)
-    {
-        for (int dx = -1; dx <= 1; dx++)
-        {
-            if (dx == 0 && dy == 0)
-                continue;
-            int nx = (x + dx + w) % w;
-            int ny = (y + dy + h) % h;
-            if (board[ny][nx] == ALIVE)
-                live++;
-        }
-    }
-    int val = board[y][x];
-    if (val == DEAD && live == 2)
-        return ALIVE;
-    else
-        return DEAD;
-}
-Cell CellularAutomata::dayAndNight(int x, int y)
-{
-    int live = 0;
-    for (int dy = -1; dy <= 1; dy++)
-    {
-        for (int dx = -1; dx <= 1; dx++)
-        {
-            if (dx == 0 && dy == 0)
-                continue;
-            int nx = (x + dx + w) % w;
-            int ny = (y + dy + h) % h;
-            if (board[ny][nx] == ALIVE)
-                live++;
-        }
-    }
-    int val = board[y][x];
-    bool born = val == DEAD && (live == 3 || live == 6 || live == 7 || live == 8);
-    bool survive = val == ALIVE && (live == 3 || live == 4 || live == 6 || live == 7 || live == 8);
-    return born || survive ? ALIVE :DEAD;
-}
-Cell CellularAutomata::diamoeba(int x, int y)
-{
-    int live = 0;
-    for (int dy = -1; dy <= 1; dy++)
-        for (int dx = -1; dx <= 1; dx++)
-        {
-            if (dx == 0 && dy == 0)
-                continue;
-            int nx = (x + dx + w) % w;
-            int ny = (y + dy + h) % h;
-            if (board[ny][nx] == ALIVE)
-                live++;
-        }
-    int val = board[y][x];
-    bool born = val == DEAD && (live == 3 || live == 5 || live == 6 || live == 7 || live == 8);
-    bool survive = val == ALIVE && (live == 5 || live == 6 || live == 7 || live == 8);
-    return born || survive ? ALIVE : DEAD;
-}
-Cell CellularAutomata::lifeWithoutDeath(int x, int y)
-{
-    int live = 0;
-    for (int dy = -1; dy <= 1; dy++)
-        for (int dx = -1; dx <= 1; dx++)
-        {
-            if (dx == 0 && dy == 0)
-                continue;
-            int nx = (x + dx + w) % w;
-            int ny = (y + dy + h) % h;
-            if (board[ny][nx] == ALIVE)
-                live++;
-        }
-    int val = board[y][x];
-    bool born = val == DEAD && (live == 3);
-    bool survive = val == ALIVE;
-    return born || survive ? ALIVE : DEAD;
-}
-Cell CellularAutomata::highlife(int x, int y)
-{
-    int live = 0;
-    for (int dy = -1; dy <= 1; dy++)
-        for (int dx = -1; dx <= 1; dx++)
-        {
-            if (dx == 0 && dy == 0)
-                continue;
-            int nx = (x + dx + w) % w;
-            int ny = (y + dy + h) % h;
-            if (board[ny][nx] == ALIVE)
-                live++;
-        }
-    int val = board[y][x];
-    bool born = val == DEAD && (live == 3 || live == 6);
-    bool survive = val == ALIVE && (live == 2 || live == 3);
-    return born || survive ? ALIVE : DEAD;
-}
