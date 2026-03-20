@@ -12,6 +12,8 @@ unsigned int mapWidth = 10;
 unsigned int mapHeight = 10;
 float cellWidth = canvas.width / mapWidth;
 float cellHeight = canvas.height / mapHeight;
+float zoom = 1.0f;
+Vector2 offset = {0, 0};
 Board board = {};
 Color liveColor = WHITE, dyingColor = GRAY, deadColor = BLACK;
 void renderBoard()
@@ -23,7 +25,7 @@ void renderBoard()
             if (board[i][j] == DEAD)
                 continue;
             Color color = board[i][j] == ALIVE ? liveColor : dyingColor;
-            DrawRectangle(j * cellWidth, i * cellHeight, cellWidth, cellHeight, color);
+            DrawRectangle(offset.x + j * cellWidth * zoom, offset.y + i * cellHeight * zoom, cellWidth * zoom, cellHeight * zoom, color);
         }
     }
 }
@@ -53,14 +55,23 @@ int main(void)
         if (boardReady)
         {
             renderBoard();
+            if (IsKeyPressed(KEY_I))
+                zoom *= 1.1f;
+            if (IsKeyPressed(KEY_O))
+                zoom *= 0.9f;
+            zoom = zoom < 1.0f ? 1.0f : zoom > 10.0f ? 10.0f
+                                                     : zoom;
             Vector2 mouse = GetMousePosition();
             if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(mouse, canvas))
             {
-                int x = mouse.x / cellWidth;
-                int y = mouse.y / cellHeight;
-                int val = board[y][x];
-                board[y][x] = val == ALIVE ? DYING : val == DYING ? DEAD
-                                                                  : ALIVE;
+                int x = (mouse.x - offset.x) / (cellWidth * zoom);
+                int y = (mouse.y - offset.y) / (cellHeight * zoom);
+                if (x >= 0 && x < mapWidth && y >= 0 && y < mapHeight)
+                {
+                    int val = board[y][x];
+                    board[y][x] = val == ALIVE ? DYING : val == DYING ? DEAD
+                                                                      : ALIVE;
+                }
             }
         }
         DrawRectangle(canvas.width, 0, screenWidth - controlsWidth, screenHeight, BLACK);
@@ -104,7 +115,7 @@ int main(void)
             GuiDisable();
         if (editAlgChoiceMode)
             GuiLock();
-        if (GuiButton({canvas.width + buttonXOffset, y + controlsHeight, buttonWidth, controlsHeight}, "Run"))
+        if (GuiButton({canvas.width + buttonXOffset, y + controlsHeight, buttonWidth, controlsHeight}, "Start"))
             automata.stop = false;
         y += controlsHeight;
         if (GuiButton({canvas.width + buttonXOffset, y + controlsHeight, buttonWidth, controlsHeight}, "Stop"))
