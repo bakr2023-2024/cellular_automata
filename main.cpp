@@ -62,7 +62,12 @@ int main(void)
             zoom = zoom < 1.0f ? 1.0f : zoom > 10.0f ? 10.0f
                                                      : zoom;
             Vector2 mouse = GetMousePosition();
-
+            if (IsKeyPressed(KEY_R))
+            {
+                offset.x = 0;
+                offset.y = 0;
+                zoom = 1.0f;
+            }
             if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT) && CheckCollisionPointRec(mouse, canvas))
             {
                 Vector2 delta = GetMouseDelta();
