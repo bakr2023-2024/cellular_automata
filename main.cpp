@@ -1,6 +1,4 @@
 #include <raylib.h>
-#include <iostream>
-#include <format>
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 #include "automata.hpp"
