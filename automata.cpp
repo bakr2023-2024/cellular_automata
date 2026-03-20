@@ -1,5 +1,4 @@
 #include "automata.hpp"
-#include <iostream>
 bool CellularAutomata::setRule(char *rule)
 {
     born = {};
