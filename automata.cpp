@@ -132,3 +132,21 @@ Cell CellularAutomata::lifeWithoutDeath(int x, int y)
     bool survive = val == ALIVE;
     return born || survive ? ALIVE : DEAD;
 }
+Cell CellularAutomata::highlife(int x, int y)
+{
+    int live = 0;
+    for (int dy = -1; dy <= 1; dy++)
+        for (int dx = -1; dx <= 1; dx++)
+        {
+            if (dx == 0 && dy == 0)
+                continue;
+            int nx = (x + dx + w) % w;
+            int ny = (y + dy + h) % h;
+            if (board[ny][nx] == ALIVE)
+                live++;
+        }
+    int val = board[y][x];
+    bool born = val == DEAD && (live == 3 || live == 6);
+    bool survive = val == ALIVE && (live == 2 || live == 3);
+    return born || survive ? ALIVE : DEAD;
+}

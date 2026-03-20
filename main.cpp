@@ -31,7 +31,7 @@ void renderBoard()
 }
 int main(void)
 {
-    const char *algs = "Game of Life;Brian's Brain;Seeds;Day and Night;Diamoeba;Life without Death;";
+    const char *algs = "Game of Life;Brian's Brain;Seeds;Day and Night;Diamoeba;Life without Death;High Life";
     InitWindow(screenWidth, screenHeight, "Cellular Automata");
     int editMapWidth = mapWidth;
     int editMapHeight = mapHeight;
@@ -43,7 +43,7 @@ int main(void)
     float buttonXOffset = (controlsWidth - buttonWidth) / 2;
     float pickerSize = controlsWidth / 2;
     SetTargetFPS(60);
-    // SetTraceLogLevel(LOG_NONE);
+    SetTraceLogLevel(LOG_NONE);
     int yGap = 10;
     CellularAutomata automata{board};
     automata.setRule((Automata)algChoice);

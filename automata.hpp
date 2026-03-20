@@ -14,7 +14,8 @@ enum Automata
     SEEDS,
     DAY_AND_NIGHT,
     DIAMOEBA,
-    LIFE_WITHOUT_DEATH
+    LIFE_WITHOUT_DEATH,
+    HIGHLIFE
 };
 using Board = std::vector<std::vector<Cell>>;
 using Rule = std::function<Cell(int, int)>;
@@ -33,6 +34,7 @@ public:
     Cell dayAndNight(int x, int y);
     Cell diamoeba(int x, int y);
     Cell lifeWithoutDeath(int x, int y);
+    Cell highlife(int x, int y);
     void setRule(Automata alg)
     {
         switch (alg)
@@ -60,6 +62,11 @@ public:
         case LIFE_WITHOUT_DEATH:
             apply = [this](int x, int y)
             { return lifeWithoutDeath(x, y); };
+            break;
+        case HIGHLIFE:
+            apply = [this](int x, int y)
+            { return highlife(x, y); };
+            break;
         default:
             break;
         }
