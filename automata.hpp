@@ -28,6 +28,7 @@ public:
     Cell life(int x, int y);
     Cell brian(int x, int y);
     Cell seeds(int x, int y);
+    Cell dayAndNight(int x, int y);
     void setRule(Automata alg)
     {
         switch (alg)
@@ -43,6 +44,10 @@ public:
         case SEEDS:
             apply = [this](int x, int y)
             { return seeds(x, y); };
+            break;
+        case DAY_AND_NIGHT:
+            apply = [this](int x, int y)
+            { return dayAndNight(x, y); };
             break;
         default:
             break;
