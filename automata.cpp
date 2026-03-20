@@ -14,11 +14,11 @@ Cell CellularAutomata::life(int x, int y)
                 live++;
         }
     }
-    if (board[y][x] == ALIVE)
-        return (live == 2 || live == 3) ? ALIVE : DEAD;
-    else
-        return (live == 3) ? ALIVE : DEAD;
+    bool livesOn = board[y][x] == ALIVE && (live == 2 || live == 3);
+    bool reproduction = board[y][x] == DEAD && live == 3;
+    return livesOn || reproduction ? ALIVE : DEAD;
 }
+
 void CellularAutomata::simulate()
 {
     if (stop)
