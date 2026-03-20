@@ -9,7 +9,8 @@ enum Cell
 };
 enum Automata
 {
-    GAME_OF_LIFE
+    GAME_OF_LIFE,
+    BRIAN
 };
 using Board = std::vector<std::vector<Cell>>;
 using Rule = std::function<Cell(int, int)>;
@@ -23,6 +24,7 @@ public:
     int w, h;
     CellularAutomata(Board &board, unsigned int w = 10, unsigned int h = 10) : board(board), w(w), h(h) {}
     Cell life(int x, int y);
+    Cell brian(int x, int y);
     void setRule(Automata alg)
     {
         switch (alg)
@@ -31,7 +33,10 @@ public:
             apply = [this](int x, int y)
             { return life(x, y); };
             break;
-
+        case BRIAN:
+            apply = [this](int x, int y)
+            { return brian(x, y); };
+            break;
         default:
             break;
         }
