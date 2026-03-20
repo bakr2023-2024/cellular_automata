@@ -1,4 +1,17 @@
 #include "automata.hpp"
+void CellularAutomata::simulate()
+{
+    if (stop)
+        return;
+    for (int i = 0; i < h; i++)
+    {
+        for (int j = 0; j < w; j++)
+        {
+            next[i][j] = apply(j, i);
+        }
+    }
+    std::swap(board, next);
+};
 Cell CellularAutomata::life(int x, int y)
 {
     int live = 0;
@@ -42,16 +55,24 @@ Cell CellularAutomata::brian(int x, int y)
     else
         return DEAD;
 }
-void CellularAutomata::simulate()
+Cell CellularAutomata::seeds(int x, int y)
 {
-    if (stop)
-        return;
-    for (int i = 0; i < h; i++)
+    int live = 0;
+    for (int dy = -1; dy <= 1; dy++)
     {
-        for (int j = 0; j < w; j++)
+        for (int dx = -1; dx <= 1; dx++)
         {
-            next[i][j] = apply(j, i);
+            if (dx == 0 && dy == 0)
+                continue;
+            int nx = (x + dx + w) % w;
+            int ny = (y + dy + h) % h;
+            if (board[ny][nx] == ALIVE)
+                live++;
         }
     }
-    std::swap(board, next);
-};
+    int val = board[y][x];
+    if (val == DEAD && live == 2)
+        return ALIVE;
+    else
+        return DEAD;
+}
